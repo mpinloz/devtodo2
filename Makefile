@@ -1,5 +1,5 @@
 TARG=todo2
-GOFILES=todo.go view.go consoleview.go legacyio.go jsonio.go main.go importer.go
+GOFILES=todo.go view.go consoleview.go legacyio.go jsonio.go main.go importer.go actions.go flags.go
 PREFIX=/usr/local
 prefix=$(PREFIX)
 bindir=$(prefix)/bin
@@ -14,7 +14,7 @@ $(TARG): $(GOFILES)
 $(TARG).1: $(TARG)
 	./$(TARG) --help-man > $@
 
-install: 
+install:
 	install -m755 $(TARG) $(bindir)/$(TARG)
 	install -d -m644 $(man1dir)
 	install -m644 $(TARG).1 $(man1dir)/$(TARG).1

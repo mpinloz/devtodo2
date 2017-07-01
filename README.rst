@@ -14,7 +14,6 @@ need Go 1 or a release candidate.
 
 Once you have Go installed and your ``GOPATH`` set, do the following::
 
-  $ go get gopkg.in/alecthomas/kingpin.v2
   $ git clone git://github.com/alecthomas/devtodo2.git
   $ cd devtodo2
   $ make
@@ -44,12 +43,12 @@ Examples
 --------
 
 =================================  ==============================
-  Task                               Command                   
+  Task                               Command
 =================================  ==============================
 Add a new task                      ``todo2 -a Shopping list``
-Add a new sub-task below task 1     ``todo2 -ag 1 Buy soap``  
-List outstanding tasks              ``todo2``                 
-List *all* tasks                    ``todo2 -A``              
+Add a new sub-task below task 1     ``todo2 -ag 1 Buy soap``
+List outstanding tasks              ``todo2``
+List *all* tasks                    ``todo2 -A``
 =================================  ==============================
 
 DevTodo1?
