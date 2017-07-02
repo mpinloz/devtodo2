@@ -22,6 +22,7 @@ import (
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 const usage = `DevTodo2 - a hierarchical command-line task manager
@@ -54,20 +55,10 @@ var taskText *[]string
 
 func processAction(tasks TaskList) {
 	priority := PriorityFromString(*priorityFlag)
-	var graft TaskNode = tasks
-	if *graftFlag != "root" {
-		if graft = tasks.Find(*graftFlag); graft == nil {
-			fatalf("invalid graft index '%s'", *graftFlag)
-		}
-	}
 
 	switch {
 	case *addFlag:
-		if len(*taskText) == 0 {
-			fatalf("expected text for new task")
-		}
-		text := strings.Join(*taskText, " ")
-		doAdd(tasks, graft, priority, text)
+		addTask(tasks, *taskText, priority, *graftFlag)
 	case *markDoneFlag:
 		doMarkDone(tasks, resolveTaskReferences(tasks, *taskText))
 	case *markNotDoneFlag:
@@ -75,16 +66,7 @@ func processAction(tasks TaskList) {
 	case *removeFlag:
 		doRemove(tasks, resolveTaskReferences(tasks, *taskText))
 	case *reparentFlag:
-		if len(*taskText) < 1 {
-			fatalf("expected <task> [<new-parent>] for reparenting")
-		}
-		var below TaskNode
-		if len(*taskText) == 2 {
-			below = resolveTaskReference(tasks, (*taskText)[1])
-		} else {
-			below = tasks
-		}
-		doReparent(tasks, resolveTaskReference(tasks, (*taskText)[0]), below)
+		reparentTask(tasks, *taskText)
 	case *titleFlag:
 		doSetTitle(tasks, *taskText)
 	case *infoFlag:
@@ -98,9 +80,9 @@ func processAction(tasks TaskList) {
 		}
 		doImport(tasks, *taskText)
 	case *updateFlag:
-		editTask(tasks, priority)
-	// case *purgeFlag != -1*time.Second:
-	// 	doPurge(tasks, *purgeFlag)
+		editTask(tasks, priority, *taskText)
+	case *purgeFlag != 0*time.Second:
+		doPurge(tasks, *purgeFlag)
 	default:
 		doView(tasks)
 	}
@@ -225,10 +207,14 @@ func main() {
 	taskText = &args
 	tasks, err := loadTaskList()
 	if err != nil {
-		fatalf("%s", err)
+		//saveTaskList(tasks)
+		//fatalf("Error loadTaskList: %s", err)
+		fmt.Println("No file found. Creating one...")
 	}
 	if tasks == nil {
+		fmt.Println("no task")
 		tasks = NewTaskList()
 	}
 	processAction(tasks)
+	saveTaskList(tasks)
 }

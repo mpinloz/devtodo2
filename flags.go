@@ -2,6 +2,7 @@ package main
 
 import (
 	"flag"
+	"time"
 )
 
 // Actions
@@ -16,6 +17,7 @@ var reparentFlag = flag.Bool("mv", false, "Reparent task A below task B")
 var priorityFlag = flag.String("p", "medium", "priority of newly created tasks (veryhigh,high,medium,low,verylow)")
 var allFlag = flag.Bool("A", false, "Show all tasks, even completed ones.")
 
+var purgeFlag = flag.Duration("purge", 0*time.Second, "Purge completed tasks older than this.")
 var summaryFlag = flag.Bool("s", false, "Summarise tasks to one line.")
 var graftFlag = flag.String("g", "root", "Task to graft new tasks to.")
 var importFlag = flag.Bool("import", false, "Import and synchronise TODO items from source code.")

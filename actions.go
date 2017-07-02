@@ -19,33 +19,28 @@ func doView(tasks TaskList) {
 
 func doAdd(tasks TaskList, graft TaskNode, priority Priority, text string) {
 	graft.Create(text, priority)
-	saveTaskList(tasks)
 }
 
 func doMarkDone(tasks TaskList, references []Task) {
 	for _, task := range references {
 		task.SetCompleted()
 	}
-	saveTaskList(tasks)
 }
 
 func doMarkNotDone(tasks TaskList, references []Task) {
 	for _, task := range references {
 		task.SetCompletionTime(time.Time{})
 	}
-	saveTaskList(tasks)
 }
 
 func doReparent(tasks TaskList, task TaskNode, below TaskNode) {
 	ReparentTask(task, below)
-	saveTaskList(tasks)
 }
 
 func doRemove(tasks TaskList, references []Task) {
 	for _, task := range references {
 		task.Delete()
 	}
-	saveTaskList(tasks)
 }
 
 func doPurge(tasks TaskList, age time.Duration) {
@@ -56,13 +51,11 @@ func doPurge(tasks TaskList, age time.Duration) {
 	for _, m := range matches {
 		m.Delete()
 	}
-	saveTaskList(tasks)
 }
 
 func doSetTitle(tasks TaskList, args []string) {
 	title := strings.Join(args, " ")
 	tasks.SetTitle(title)
-	saveTaskList(tasks)
 }
 
 func doShowInfo(tasks TaskList, index string) {
@@ -81,20 +74,43 @@ func doEditTask(tasks TaskList, task Task, priority Priority, text string) {
 	if priority != -1 {
 		task.SetPriority(priority)
 	}
-	saveTaskList(tasks)
 }
 
-func editTask(tasks TaskList, priority Priority) {
-	if len(*taskText) < 1 {
-		fatalf("expected [-p <priority>] <task> [<text>]")
+func editTask(tasks TaskList, priority Priority, taskText []string) {
+	if len(taskText) < 1 {
+		fatalf("expected [-p <newpriority>] <task> [<newtext>]")
 	}
-	task := tasks.Find((*taskText)[0])
+	task := tasks.Find((taskText)[0])
 	if task == nil {
-		fatalf("invalid task %s", (*taskText)[0])
+		fatalf("invalid task %s", (taskText)[0])
 	}
-	text := strings.Join((*taskText)[1:], " ")
-	if *priorityFlag == "" {
-		priority = -1
-	}
+	text := strings.Join((taskText)[1:], " ")
 	doEditTask(tasks, task, priority, text)
+}
+
+func reparentTask(tasks TaskList, taskText []string) {
+	if len(taskText) < 1 {
+		fatalf("expected <task> [<new-parent>] for reparenting")
+	}
+	var below TaskNode
+	if len(taskText) == 2 {
+		below = resolveTaskReference(tasks, (taskText)[1])
+	} else {
+		below = tasks
+	}
+	doReparent(tasks, resolveTaskReference(tasks, (taskText)[0]), below)
+}
+
+func addTask(tasks TaskList, taskText []string, priority Priority, graftFlag string) {
+	var graft TaskNode = tasks
+	if graftFlag != "root" {
+		if graft = tasks.Find(graftFlag); graft == nil {
+			fatalf("invalid graft index '%s'", graftFlag)
+		}
+	}
+	if len(taskText) == 0 {
+		fatalf("expected text for new task")
+	}
+	text := strings.Join(taskText, " ")
+	doAdd(tasks, graft, priority, text)
 }
