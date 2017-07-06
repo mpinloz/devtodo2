@@ -83,6 +83,8 @@ func processAction(tasks TaskList) {
 		editTask(tasks, priority, *taskText)
 	case *purgeFlag != 0*time.Second:
 		doPurge(tasks, *purgeFlag)
+	case *helpManFlag:
+		doManPage(usage)
 	default:
 		doView(tasks)
 	}
@@ -202,6 +204,12 @@ func saveTaskList(tasks TaskList) {
 }
 
 func main() {
+	flag.Usage = func() {
+		fmt.Fprintf(os.Stderr, usage+"\n")
+		fmt.Fprintf(os.Stderr, "OPCIONES\n\n")
+		flag.PrintDefaults()
+	}
+
 	flag.Parse()
 	args := flag.Args()
 	taskText = &args
@@ -209,10 +217,8 @@ func main() {
 	if err != nil {
 		//saveTaskList(tasks)
 		//fatalf("Error loadTaskList: %s", err)
-		fmt.Println("No file found. Creating one...")
 	}
 	if tasks == nil {
-		fmt.Println("no task")
 		tasks = NewTaskList()
 	}
 	processAction(tasks)

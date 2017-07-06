@@ -1,6 +1,9 @@
 package main
 
 import (
+	"flag"
+	"fmt"
+	"os"
 	"strings"
 	"time"
 )
@@ -113,4 +116,22 @@ func addTask(tasks TaskList, taskText []string, priority Priority, graftFlag str
 	}
 	text := strings.Join(taskText, " ")
 	doAdd(tasks, graft, priority, text)
+}
+
+func doManPage(usage string) {
+	title := "todo2 1 \"2.2.0\""
+	name := "todo2 - Terminal task manager"
+	synopsis := "todo2 [options] [args..]"
+	author := "Alec Thomas <alec@swapoff.org>"
+	fmt.Fprintln(os.Stdout, ".TH "+title)
+	fmt.Fprintln(os.Stdout, ".SH NAME\n"+name)
+	fmt.Fprintln(os.Stdout, ".SH SYNOPSIS\n"+synopsis)
+	fmt.Fprintln(os.Stdout, ".SH DESCRIPTION\n"+usage)
+	fmt.Fprintln(os.Stdout, ".SH OPTIONS")
+
+	flag.VisitAll(func(arg1 *flag.Flag) {
+		fmt.Fprintf(os.Stdout, ".TP\n.BR \\-%s \n%s\n", arg1.Name, arg1.Usage)
+	})
+	fmt.Fprintln(os.Stdout, ".SH AUTHOR\n"+author)
+
 }
