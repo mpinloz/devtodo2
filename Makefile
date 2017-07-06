@@ -16,7 +16,7 @@ $(TARG).1: $(TARG)
 
 install:
 	install -m755 $(TARG) $(bindir)/$(TARG)
-	install -d -m644 $(man1dir)
+	install -d -m755 $(man1dir)
 	install -m644 $(TARG).1 $(man1dir)/$(TARG).1
 
 uninstall:

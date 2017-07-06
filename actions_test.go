@@ -72,12 +72,12 @@ func TestDoSetTitle(t *testing.T) {
 
 func TestDoRemove(t *testing.T) {
 	tasks := getTestTaskList()
-	text := "2"
+	text := "1-2"
 	textArray := strings.Split(text, " ")
 	taskText = &textArray
 	references := resolveTaskReferences(tasks, *taskText)
 	doRemove(tasks, references)
-	if tasks == nil || tasks.Len() != 2 || tasks.At(1).Text() != "do C" {
+	if tasks == nil || tasks.Len() != 1 || tasks.At(0).Text() != "do C" {
 		t.Fail()
 	}
 }

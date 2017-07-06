@@ -83,8 +83,6 @@ func processAction(tasks TaskList) {
 		editTask(tasks, priority, *taskText)
 	case *purgeFlag != 0*time.Second:
 		doPurge(tasks, *purgeFlag)
-	case *helpManFlag:
-		doManPage(usage)
 	default:
 		doView(tasks)
 	}
@@ -213,14 +211,20 @@ func main() {
 	flag.Parse()
 	args := flag.Args()
 	taskText = &args
-	tasks, err := loadTaskList()
-	if err != nil {
-		//saveTaskList(tasks)
-		//fatalf("Error loadTaskList: %s", err)
+
+	if *helpManFlag {
+		doManPage(usage)
+	} else {
+		tasks, err := loadTaskList()
+		if err != nil {
+			//saveTaskList(tasks)
+			//fatalf("Error loadTaskList: %s", err)
+		}
+		if tasks == nil {
+			tasks = NewTaskList()
+		}
+		processAction(tasks)
+		saveTaskList(tasks)
 	}
-	if tasks == nil {
-		tasks = NewTaskList()
-	}
-	processAction(tasks)
-	saveTaskList(tasks)
+
 }
